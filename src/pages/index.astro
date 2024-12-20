@@ -1,0 +1,24 @@
+---
+import { GraphQLClient } from "graphql-request";
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+
+const client = new GraphQLClient(import.meta.env.HG_ENDPOINT);
+
+const pagesQuery = `query MyQuery {
+	pages {
+		slug
+		title
+		content {
+			html
+		}
+	}
+}`
+
+const { pages } = await client.request(pagesQuery);
+
+---
+
+<Layout title="home">
+	<Hero heading="Demo" />
+</Layout>

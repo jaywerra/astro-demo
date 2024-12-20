@@ -1,0 +1,44 @@
+---
+import type { GetStaticPaths } from "astro";
+import { GraphQLClient } from "graphql-request";
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+
+export async function getStaticPaths() {
+    const client = new GraphQLClient(import.meta.env.HG_ENDPOINT);
+
+    const pagesQuery = `query MyQuery {
+        pages {
+            slug
+            title
+            content {
+                html
+            }
+        }
+    }`
+
+    const pages = await client.request(pagesQuery);
+
+    return pages.pages.map(page => ({
+        params: {
+            slug: page.slug,
+        },
+        props: {
+            page
+        }
+    }))
+}
+
+const { page } = Astro.props;
+---
+
+<Layout title={page.title}>
+    <Hero
+        heading={page.title}
+    />
+    {page.content && 
+        <div class="container mx-auto py-20">
+            <div set:html={page.content.html} class="lg:max-w-4xl px-4 lg:px-0 text-xl leading-loose" />
+        </div>
+    }
+</Layout>
