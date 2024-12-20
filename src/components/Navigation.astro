@@ -38,11 +38,13 @@ const navLinks = pages.map((page) => ({
     const currentPath = window.location.pathname;
     const links = document.querySelectorAll('.nav-link');
 
+    console.log(currentPath)
+
     links.forEach(link => {
         if (link.getAttribute('href') === currentPath || link.getAttribute('href') === `${currentPath}/`) {
             link.classList.add('text-blue-600');
         } else {
-            link.classList.add('black');
+            link.classList.add('text-black');
         }
     });
 </script>
