@@ -13,10 +13,12 @@ const pagesQuery = `
 
 const { pages } = await client.request(pagesQuery);
 
-const navLinks = pages.map((page) => ({
-    ...page,
-    slug: page.slug.startsWith("/") ? page.slug : `/${page.slug}`,
-}));
+const navLinks = pages
+    .filter((page) => page.slug !== "home")
+    .map((page) => ({
+        ...page,
+        slug: page.slug.startsWith("/") ? page.slug : `/${page.slug}`,
+    }));
 ---
 
 <nav>
@@ -24,7 +26,7 @@ const navLinks = pages.map((page) => ({
         {navLinks.map((link) => (
             <li>
                 <a
-                    href={link.slug}
+                    href={`${link.slug}/`}
                     class="text-xl nav-link"
                 >
                     {link.title}
@@ -37,8 +39,6 @@ const navLinks = pages.map((page) => ({
 <script>
     const currentPath = window.location.pathname;
     const links = document.querySelectorAll('.nav-link');
-
-    console.log(currentPath)
 
     links.forEach(link => {
         if (link.getAttribute('href') === currentPath || link.getAttribute('href') === `${currentPath}/`) {

@@ -3,22 +3,38 @@ import { GraphQLClient } from "graphql-request";
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
 
+export const prerender = true;
+
+// Initialize GraphQL client
 const client = new GraphQLClient(import.meta.env.HG_ENDPOINT);
 
-const pagesQuery = `query MyQuery {
-	pages {
-		slug
-		title
-		content {
-			html
-		}
-	}
-}`
+// GraphQL query to fetch the content for the "home" slug
+const homeQuery = `
+    query GetHomePage {
+        pages(where: { slug: "home" }) {
+            slug
+            title
+            content {
+                html
+            }
+        }
+    }
+`;
 
-const { pages } = await client.request(pagesQuery);
+// Fetch data for the home page
+const { pages } = await client.request(homeQuery);
+const page = pages[0];
 
+if (!page) {
+    throw new Error("Home page content not found.");
+}
 ---
 
-<Layout title="home">
-	<Hero heading="Demo" />
+<Layout title={page.title}>
+    <Hero heading={page.title} />
+    {page.content && (
+        <div class="container mx-auto py-20">
+            <div set:html={page.content.html} class="lg:max-w-4xl px-4 lg:px-0 text-xl leading-loose" />
+        </div>
+    )}
 </Layout>
