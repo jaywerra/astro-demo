@@ -1,9 +1,7 @@
 ---
 import { GraphQLClient } from "graphql-request";
 
-const currentPath = Astro.url.pathname;
 const client = new GraphQLClient(import.meta.env.HG_ENDPOINT);
-
 const pagesQuery = `
     query MyQuery {
         pages {
@@ -27,7 +25,7 @@ const navLinks = pages.map((page) => ({
             <li>
                 <a
                     href={link.slug}
-                    class={`text-xl ${currentPath === link.slug ? 'text-blue-600' : 'text-black'}`}
+                    class="text-xl nav-link"
                 >
                     {link.title}
                 </a>
@@ -35,3 +33,16 @@ const navLinks = pages.map((page) => ({
         ))}
     </ul>
 </nav>
+
+<script>
+    const currentPath = window.location.pathname;
+    const links = document.querySelectorAll('.nav-link');
+
+    links.forEach(link => {
+        if (link.getAttribute('href') === currentPath || link.getAttribute('href') === `${currentPath}/`) {
+            link.classList.add('text-blue-600');
+        } else {
+            link.classList.add('black');
+        }
+    });
+</script>
